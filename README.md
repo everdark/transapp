@@ -1,5 +1,5 @@
 # transapp
-Remote management for torrents.
+Remote management for torrents via dropbox api.
 
 
 Use format for config.ini:
