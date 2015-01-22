@@ -13,8 +13,8 @@ import daemon
 def main():
     while True:
         # connect to dropbox api
-        access_token = config.get("mydropbox", "access_token")
-        magnet_link_file = config.get("mydropbox", "magnet_file_path")
+        access_token = config.get("dropbox", "access_token")
+        magnet_link_file = config.get("dropbox", "magnet_file_path")
         client = dropbox.client.DropboxClient(access_token)
         # get magnet links and add to transmission server
         f = client.get_file(magnet_link_file)
