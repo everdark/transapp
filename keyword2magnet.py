@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+# -*- coding: utf-8 -*-
 
 
 import sys
@@ -24,7 +24,7 @@ def main():
     dls = [ int(t.find("td", {"class": "tlistdn"}).text) for t in tlist ]
     chosen = dls.index(max(dls)) # take the one with maximum downloads
     target = tlist[chosen]
-    name = target.find("td", {"class": "tlistname"}).text
+    name = target.find("td", {"class": "tlistname"}).text.encode("utf-8")
     link = target.find("td", {"class": "tlistdownload"}).find('a').get("href")
     print("File targeted: %s" % name)
 
