@@ -16,7 +16,7 @@ def main():
     pagelink = urllib2.urlopen("http://sukebei.nyaa.se/?page=search&cats=0_0&filter=0&term=%s" % keyword)
     
     # parse nyaa page
-    soup = BeautifulSoup(pagelink)
+    soup = BeautifulSoup(pagelink, "lxml")
     tlist = soup.findAll("tr", {"class": "tlistrow"})
     if not len(tlist):
         print("No mathcing result.")
