@@ -34,7 +34,7 @@ def main():
             f.close()
             os.remove(tmpfname)
         else:
-            shutdownTransmission() 
+            transapp.shutdownTransmission() 
             time.sleep(60*10)
 
 def runAsDaemon():

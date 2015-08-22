@@ -32,7 +32,7 @@ def main():
         f.close()
         os.remove(tmpfname)
     else:
-        shutdownTransmission()
+        transapp.shutdownTransmission()
 
 if __name__ == "__main__":
     config = ConfigParser.ConfigParser()
