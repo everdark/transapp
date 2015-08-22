@@ -6,5 +6,5 @@ def shutdownTransmission():
     cur_torrents = subprocess.check_output(["transmission-remote", "-l"])
     pcts = [ t.split()[1] for t in cur_torrents[1:-2] ]
     unfinished = [ p for p in pcts if p != "100%" ]
-    if not len(unfinish):
+    if not len(unfinished):
         subprocess.call(['service', 'transmission-daemon', 'stop'])
