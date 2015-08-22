@@ -9,6 +9,14 @@ import os
 import time
 
 
+def shutdownTransmission():
+    """shutdown transmission daemon if all current torrents are finished downloading"""
+    incomplete_folder = config.get("transmission_server", "incomplete_path")
+    if not subprocess.call(['service', 'transmission-daemon', 'status']):
+        unfinished = os.listdir(incomplete_folder)
+        if not len(unfinished):
+            subprocess.call(['service', 'transmission-daemon', 'stop'])
+
 def main():
     # connect to dropbox api
     access_token = config.get("dropbox", "access_token")
@@ -30,12 +38,7 @@ def main():
         f.close()
         os.remove(tmpfname)
     else:
-        # shutdown transmission daemon if all current torrents are finished downloading
-        incomplete_folder = config.get("transmission_server", "incomplete_path")
-        if not subprocess.call(['service', 'transmission-daemon', 'status']):
-            unfinished = os.listdir(incomplete_folder)
-            if not len(unfinished):
-                subprocess.call(['service', 'transmission-daemon', 'stop'])
+        shutdownTransmission()
 
 if __name__ == "__main__":
     config = ConfigParser.ConfigParser()
