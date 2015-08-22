@@ -9,6 +9,8 @@ import os
 import time
 import daemon
 
+import transapp
+
 
 def main():
     while True:
@@ -32,13 +34,8 @@ def main():
             f.close()
             os.remove(tmpfname)
         else:
-            # shutdown transmission daemon if all current torrents are finished downloading
-            incomplete_folder = config.get("transmission_server", "incomplete_path")
-            if not subprocess.call(['service', 'transmission-daemon', 'status']):
-                unfinished = os.listdir(incomplete_folder)
-                if not len(unfinished):
-                    subprocess.call(['service', 'transmission-daemon', 'stop'])
-        time.sleep(60*10)
+            shutdownTransmission() 
+            time.sleep(60*10)
 
 def runAsDaemon():
     with daemon.DaemonContext():
