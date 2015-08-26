@@ -9,8 +9,7 @@ import siteparser
 # construct command line argument parser
 def getCommandLineParser():
     parser = argparse.ArgumentParser(
-            description="Crawl given bango and return available magnet link.",
-            epilog="Notice: the --src option is not yet implemented.")
+            description="Crawl given bango and return available magnet link.")
     parser.add_argument("bango", metavar='bango', type=str, nargs=1, 
                         help="the bango wanted.")
     parser.add_argument("-a", "--auto", action="store_true", 
@@ -43,13 +42,15 @@ def main():
 
     if args.src == "nyaa":
         parser = siteparser.nyaaParser(args.bango)
+    elif args.src == "dmhy":
+        parser = siteparser.dmhyParser(args.bango)
     else:
         print("Source type \"%s\"not found. Program aborted." % args.src)
         return None
 
     tlist = parser.getTorrentInfo()
     if not len(tlist):
-        print("No mathcing result.")
+        print("No matching result.")
         return None
 
     if args.auto:
@@ -67,7 +68,7 @@ def main():
     print("File targeted: %s" % name)
 
     # download the chosen torrent
-    magnet = transapp.extractMagnet(link)
+    magnet = link if "magnet:?xt=urn:btih:" in link else transapp.extractMagnet(link)
     print magnet
 
 
