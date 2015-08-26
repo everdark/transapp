@@ -2,11 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import argparse
-import urllib2
-from bs4 import BeautifulSoup
-import bencode
-import hashlib
-import base64
 
 import transapp
 import siteparser
