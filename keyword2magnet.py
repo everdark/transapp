@@ -1,15 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-
 import argparse
 import urllib2
 from bs4 import BeautifulSoup
 import bencode
 import hashlib
 import base64
-import urllib
 
+import transapp
 
 # construct command line argument parser
 def getCommandLineParser():
@@ -76,17 +75,8 @@ def main():
     print("File targeted: %s" % name)
 
     # download the chosen torrent
-    torrent = urllib2.urlopen(link).read()
-    meta = bencode.bdecode(torrent)
-    b32hash = base64.b32encode(hashlib.sha1(bencode.bencode(meta["info"])).digest())
-    params =[
-        ("xt", "urn:btih:%s" % b32hash),
-        ("dn", meta["info"].get("name")),
-        ("tr", meta.get("announce")),
-        ("xl", meta["info"].get("length"))
-        ]
-    magnet = "magnet:?%s" % urllib.urlencode([(k, v) for k, v in params if v is not None])
-    print magnet.replace("urn%3Abtih%3A", "urn:btih:")
+    magnet = transapp.extractMagnet(link)
+    print magnet
 
 
 if __name__ == "__main__":
