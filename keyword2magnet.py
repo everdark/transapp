@@ -9,6 +9,7 @@ import hashlib
 import base64
 
 import transapp
+import siteparser
 
 # construct command line argument parser
 def getCommandLineParser():
@@ -40,13 +41,9 @@ def getUserInput(maxn=10):
 # define main function
 def main():
     parser = getCommandLineParser()
-    args = parser.parse_args()
-    site = "http://sukebei.nyaa.se/"
-    pagelink = urllib2.urlopen("%s?page=search&cats=0_0&filter=0&term=%s" % (site, args.bango))
-    
-    # parse nyaa page
-    soup = BeautifulSoup(pagelink, "lxml") # explicitly require lxml
-    tlist = soup.findAll("tr", {"class": "tlistrow"})
+    args = parser.parse_args()    
+    parser = siteparser.nyaaParser(args.bango)
+    tlist = parser.getTorrentInfo()
 
     if not len(tlist):
         print("No mathcing result.")
@@ -54,23 +51,15 @@ def main():
 
     if args.auto:
         # take the one with maximum downloads
-        dls = [ int(t.find("td", {"class": "tlistdn"}).text) for t in tlist ]
-        chosen = dls.index(max(dls))
-        target = tlist[chosen]
-        name = target.find("td", {"class": "tlistname"}).text.encode("utf-8")
-        link = target.find("td", {"class": "tlistdownload"}).find('a').get("href")
+        dls = [ t[2] for t in tlist ]
+        target = tlist[dls.index(max(dls))]
+        name, link = target[:2] 
     else:
         # list top 10 and wait for user interact
-        titles = []
-        links = []
-        for t in tlist[:args.nitem]:
-            titles.append(t.find("td", {"class": "tlistname"}).text.encode("utf-8"))
-            links.append(t.find("td", {"class": "tlistdownload"}).find('a').get("href"))
-        for i, t in enumerate(titles):
-            print i, t
+        for i, t in enumerate(tlist[:args.nitem]):
+            print i, t[0]
         chosen = getUserInput(maxn=args.nitem)
-        name = titles[chosen]
-        link = links[chosen]
+        name, link = tlist[chosen][:2]
 
     print("File targeted: %s" % name)
 
