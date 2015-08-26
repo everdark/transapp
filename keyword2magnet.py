@@ -8,14 +8,17 @@ import siteparser
 
 # construct command line argument parser
 def getCommandLineParser():
-    parser = argparse.ArgumentParser(description=
-            "Crawl given bango (over nyaa) and return available magnet link.")
+    parser = argparse.ArgumentParser(
+            description="Crawl given bango and return available magnet link.",
+            epilog="Notice: the --src option is not yet implemented.")
     parser.add_argument("bango", metavar='bango', type=str, nargs=1, 
                         help="the bango wanted.")
     parser.add_argument("-a", "--auto", action="store_true", 
                         help="automatically return the magnet according to maximum dls")
     parser.add_argument("-n", "--nitem", metavar='N', type=int, action="store", default=10,
                         help="maximum number of items listed, default at 10; ignored if -a is used")
+    parser.add_argument("-s", "--src", metavar="SRC", type=str, action="store", default="nyaa",
+                        help="source site to parse, default at \"nyaa\"")
     return parser
 
 def getUserInput(maxn=10):
@@ -36,10 +39,15 @@ def getUserInput(maxn=10):
 # define main function
 def main():
     parser = getCommandLineParser()
-    args = parser.parse_args()    
-    parser = siteparser.nyaaParser(args.bango)
-    tlist = parser.getTorrentInfo()
+    args = parser.parse_args()
 
+    if args.src == "nyaa":
+        parser = siteparser.nyaaParser(args.bango)
+    else:
+        print("Source type \"%s\"not found. Program aborted." % args.src)
+        return None
+
+    tlist = parser.getTorrentInfo()
     if not len(tlist):
         print("No mathcing result.")
         return None
