@@ -8,15 +8,19 @@ import textwrap
 import siteparser
 
 # construct command line argument parser
-def getCommandLineParser():
+def getAllParserClass():
     all_parsers = [ c for c in inspect.getmembers(siteparser, inspect.isclass) 
                     if c[1].__module__ == "siteparser" ]
-    plist = [ '\t'.join([p[0].replace("Parser", ''), p[1].site]) for p in all_parsers ]
+    return all_parsers
+
+def getCommandLineParser():
+    plist = [ '\t'.join([p[0].replace("Parser", ''), p[1].site]) for p in getAllParserClass() ]
+    plist_excludeSuper = [ p for p in plist if "any" not in p ]
     src_help = '''\
-               source site to parse (default at \"nyaa\")
-               available SRC includes:
-               -----------------------
-               '''
+           source site to parse (default at \"nyaa\")
+           available SRC includes:
+           -----------------------
+           '''
     parser = argparse.ArgumentParser(
             description="Crawl given bango and return available magnet link.",
             formatter_class=argparse.RawTextHelpFormatter)
@@ -27,7 +31,7 @@ def getCommandLineParser():
     parser.add_argument("-n", "--nitem", metavar='N', type=int, action="store", default=10,
                         help="maximum number of items listed (default at 10); ignored if -a is used")
     parser.add_argument("-s", "--src", metavar="SRC", type=str, action="store", default="nyaa",
-                        help=''.join([textwrap.dedent(src_help), '\n'.join(plist)]))
+                        help=''.join([textwrap.dedent(src_help), '\n'.join(plist_excludeSuper)]))
     return parser
 
 def getUserInput(maxn=10):
@@ -49,17 +53,24 @@ def getUserInput(maxn=10):
 def main():
     parser = getCommandLineParser()
     args = parser.parse_args()
+    all_parsers = [ p[0].replace("Parser", '') for p in getAllParserClass() ]
+    check_src = [ args.src in p for p in all_parsers ]
+    resolved_src = dict(zip(all_parsers, check_src))
 
-    if args.src == "nyaa":
-        parser = siteparser.nyaaParser(args.bango)
-    elif args.src == "dmhy":
-        parser = siteparser.dmhyParser(args.bango)
-    elif args.src == "_1337x":
-        parser = siteparser._1337xParser(args.bango)
-    else:
+    if sum(check_src) == 0:
         print("Source type \"%s\"not found. Program aborted." % args.src)
         return None
+    elif sum(check_src) > 1:
+        print("Source type ambiguous. Please re-specify in more accuracy.")
+        return None
 
+    if args.src in "nyaa":
+        parser = siteparser.nyaaParser(args.bango)
+    elif args.src in "dmhy":
+        parser = siteparser.dmhyParser(args.bango)
+    elif args.src in "_1337x":
+        parser = siteparser._1337xParser(args.bango)
+       
     tlist = parser.getTorrentInfo()
     if not len(tlist):
         print("No matching result.")
