@@ -5,7 +5,6 @@ import argparse
 import inspect
 import textwrap
 
-import transapp
 import siteparser
 
 # construct command line argument parser
@@ -55,6 +54,8 @@ def main():
         parser = siteparser.nyaaParser(args.bango)
     elif args.src == "dmhy":
         parser = siteparser.dmhyParser(args.bango)
+    elif args.src == "_1337x":
+        parser = siteparser._1337xParser(args.bango)
     else:
         print("Source type \"%s\"not found. Program aborted." % args.src)
         return None
@@ -79,7 +80,7 @@ def main():
     print("File targeted: %s" % name)
 
     # download the chosen torrent
-    magnet = link if "magnet:?xt=urn:btih:" in link else transapp.extractMagnet(link)
+    magnet = parser.resolveLink(link)
     print magnet
 
 
