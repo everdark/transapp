@@ -2,22 +2,33 @@
 # -*- coding: utf-8 -*-
 
 import argparse
+import inspect
+import textwrap
 
 import transapp
 import siteparser
 
 # construct command line argument parser
 def getCommandLineParser():
+    all_parsers = [ c for c in inspect.getmembers(siteparser, inspect.isclass) 
+                    if c[1].__module__ == "siteparser" ]
+    plist = [ '\t'.join([p[0].replace("Parser", ''), p[1].site]) for p in all_parsers ]
+    src_help = '''\
+               source site to parse (default at \"nyaa\")
+               available SRC includes:
+               -----------------------
+               '''
     parser = argparse.ArgumentParser(
-            description="Crawl given bango and return available magnet link.")
+            description="Crawl given bango and return available magnet link.",
+            formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument("bango", metavar='bango', type=str, nargs=1, 
                         help="the bango wanted.")
     parser.add_argument("-a", "--auto", action="store_true", 
-                        help="automatically return the magnet according to maximum dls")
+                        help="automatically return the magnet link according to maximum dls")
     parser.add_argument("-n", "--nitem", metavar='N', type=int, action="store", default=10,
-                        help="maximum number of items listed, default at 10; ignored if -a is used")
+                        help="maximum number of items listed (default at 10); ignored if -a is used")
     parser.add_argument("-s", "--src", metavar="SRC", type=str, action="store", default="nyaa",
-                        help="source site to parse, default at \"nyaa\"")
+                        help=''.join([textwrap.dedent(src_help), '\n'.join(plist)]))
     return parser
 
 def getUserInput(maxn=10):
