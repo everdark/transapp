@@ -7,7 +7,6 @@ import textwrap
 
 import siteparser
 
-# construct command line argument parser
 def getAllParserClass():
     all_parsers = [ c for c in inspect.getmembers(siteparser, inspect.isclass) 
                     if c[1].__module__ == "siteparser" ]
@@ -49,28 +48,27 @@ def getUserInput(maxn=10):
                 continue
     return chosen
 
-# define main function
 def main():
+    # get command line arguments
     parser = getCommandLineParser()
     args = parser.parse_args()
-    all_parsers = [ p[0].replace("Parser", '') for p in getAllParserClass() ]
-    check_src = [ args.src in p for p in all_parsers ]
-    resolved_src = dict(zip(all_parsers, check_src))
 
-    if sum(check_src) == 0:
+    # determine and utilize selected site parser class
+    all_parsers = dict([ (p[0].replace("Parser", ''), p[1]) for p in getAllParserClass() ])
+    all_parsers.pop("any", None)
+    check_src = dict([ (p, args.src in p) for p in all_parsers.keys() ])
+    np = sum(check_src.values())
+
+    if np == 0:
         print("Source type \"%s\"not found. Program aborted." % args.src)
         return None
-    elif sum(check_src) > 1:
+    elif np > 1:
         print("Source type ambiguous. Please re-specify in more accuracy.")
         return None
 
-    if args.src in "nyaa":
-        parser = siteparser.nyaaParser(args.bango)
-    elif args.src in "dmhy":
-        parser = siteparser.dmhyParser(args.bango)
-    elif args.src in "_1337x":
-        parser = siteparser._1337xParser(args.bango)
-       
+    selected_parser = [ k for k, v in check_src.items() if v == True][0]
+    parser = all_parsers[selected_parser](args.bango)
+
     tlist = parser.getTorrentInfo()
     if not len(tlist):
         print("No matching result.")
@@ -90,7 +88,7 @@ def main():
 
     print("File targeted: %s" % name)
 
-    # download the chosen torrent
+    # resolve the magnet link from selected torrent
     magnet = parser.resolveLink(link)
     print magnet
 
