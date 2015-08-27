@@ -18,16 +18,22 @@ from bs4 import BeautifulSoup
 
 import transapp
 
-class nyaaParser:
+class anyParser:
+    """Super class for any parser"""
+
+    site = ''
+
+    def __init__(self, searchw): self.searchw = str(searchw)
+    def getTorrentInfo(): pass
+    def resolveLink(): pass
+
+class nyaaParser(anyParser):
     """Specific parser for Nyaa"""
     
     site = "http://sukebei.nyaa.se/"
 
-    def __init__(self, bango):
-        self.bango = bango
-
     def getParsedPage(self):
-        query_link = "%s?page=search&cats=0_0&filter=0&term=%s" % (self.site, self.bango)
+        query_link = "%s?page=search&cats=0_0&filter=0&term=%s" % (self.site, self.searchw)
         soup = BeautifulSoup(urllib2.urlopen(query_link), "lxml")
         tlist = soup.findAll("tr", {"class": "tlistrow"})
         return tlist
@@ -42,13 +48,10 @@ class nyaaParser:
     def resolveLink(self, link):
         return transapp.extractMagnet(link)
 
-class dmhyParser:
+class dmhyParser(anyParser):
     """"Specific parser for DMHY"""
 
     site = "https://share.dmhy.org/"
-
-    def __init__(self, searchw):
-        self.searchw = str(searchw)
 
     def getParsedPage(self):
         query_link = "%stopics/list?keyword=%s" % (self.site, urllib.quote(self.searchw))
@@ -69,13 +72,10 @@ class dmhyParser:
     def resolveLink(self, link):
         return link
 
-class _1337xParser:
+class _1337xParser(anyParser):
     """Specific parser for 1337x"""
 
     site = "http://1337x.to/"
-
-    def __init__(self, searchw):
-        self.searchw = str(searchw)
 
     def getParsedPage(self):
         query_link = "%ssearch/%s/1/" % (self.site, urllib.quote(self.searchw))
