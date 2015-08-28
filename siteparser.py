@@ -1,5 +1,5 @@
 """
-Every site parser, as a class, must implement the following two method:
+Every site parser, as a class extending anyParser, must implement the following methods:
     getTorrentInfo
     resolveLink
 
