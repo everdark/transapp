@@ -22,10 +22,10 @@ def getCommandLineParser():
            -----------------------
            '''
     parser = argparse.ArgumentParser(
-            description="Crawl given bango and return available magnet link.",
+            description="Crawl given keyword and return available magnet link.",
             formatter_class=argparse.RawTextHelpFormatter)
-    parser.add_argument("bango", metavar='bango', type=str, nargs=1, 
-                        help="the bango wanted.")
+    parser.add_argument("keyword", metavar='keyword', type=str, nargs=1, 
+                        help="the keyword wanted.")
     parser.add_argument("-a", "--auto", action="store_true", 
                         help="automatically return the magnet link according to maximum dls")
     parser.add_argument("-n", "--nitem", metavar='N', type=int, action="store", default=10,
@@ -68,7 +68,7 @@ def main():
         return None
 
     selected_parser = [ k for k, v in check_src.items() if v == True][0]
-    parser = all_parsers[selected_parser](args.bango)
+    parser = all_parsers[selected_parser](args.keyword)
 
     tlist = parser.getTorrentInfo()
     if not len(tlist):
