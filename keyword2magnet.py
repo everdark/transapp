@@ -17,6 +17,7 @@ def getCommandLineParser():
     plist_excludeSuper = [ p for p in plist if "any" not in p ]
     src_help = '''\
            source site to parse (default at \"nyaa\")
+           partial matching is allowed
            available SRC includes:
            -----------------------
            '''
