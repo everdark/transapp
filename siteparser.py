@@ -58,15 +58,16 @@ class dmhyParser(anyParser):
         soup = BeautifulSoup(urllib2.urlopen(query_link), "lxml")
         tlist = soup.findAll("td", {"class": "title"})
         mlist = soup.findAll('a', {"class": "download-arrow arrow-magnet"})
-        stat = soup.findAll("td", {"nowrap": "nowrap"}, {"align": "center"})
-        return tlist, mlist, stat[4::5]
+        stat = soup.findAll("td", {"nowrap": "nowrap"}, {"align": "center"})[4::5]
+        return tlist, mlist, stat
 
     def getTorrentInfo(self):
         tlist, mlist, stat = self.getParsedPage()
         tlist = [ t.findAll('a')[-1] for t in tlist]
         tinfo = [ (t.text.encode("utf-8").strip(),
                    m.get("href"),
-                   int(s.text)) for t, m, s in zip(tlist, mlist, stat) ]
+                   0 if s.text == '-' else int(s.text)) 
+                   for t, m, s in zip(tlist, mlist, stat) ]
         return tinfo
 
     def resolveLink(self, link):
