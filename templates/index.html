@@ -1,28 +1,47 @@
 <!doctype html>
-<title>Test</title>
-{% if name %}
-  <h1>Hello {{ name }}!</h1>
-{% else %}
-  <h1>Hello Crawler!</h1>
-{% endif %}
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <title>CrawlThemAll</title>
+    
+    <link rel="stylesheet" href="{{ url_for("static", filename="style.css") }}">
+    <link rel="stylesheet" href="{{ url_for("static", filename="bootstrap/css/bootstrap.min.css") }}">
+</head>
 
-<form method="post">
-    <p>Search Word: <input type="text" name="sw">
-    <p>Parser:
-    {% for pname in all_parsers %}
-        <p><input type="radio" name="parser" value="{{ pname }}"> {{ pname }}
-    {% endfor %}
-    <p><input type="submit" value="Go!">
-</form>
+<body>
+    <script src="{{ url_for("static", filename="jquery-1.11.3.js") }}"></script>
+    <script src="{{ url_for("static", filename="bootstrap/js/bootstrap.min.js") }}"></script>
+    <div class="headline">
+        <h1 class="headline-title">Hello Crawler!</h1>
+        <small>You crawl, I crawl.</small>
+    </div>
 
-{% if no_result %}
-    No matching result.
-{% endif %}
+    <form method="post" role="form">
+        <div class="form-group">
+            <input class="form-control" placeholder="Enter search words here" 
+                   type="text" name="sw" style="width:35%;margin:auto;">
+        </div>
 
-{% if results %}
-    <ul>
-    {% for res in results %}
-        <li>{{ res }}</li>
-    {% endfor %}
-    </ul>
-{% endif %}
+        <div class="form-group">
+            <select class="form-control" name="parser" style="width:35%;margin:auto;">
+                <option value='' disabled selected>Select a parser</option>
+            {% for pname in all_parsers %}
+                <option> {{ pname }} </option>
+            {% endfor %}
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-default btn-block" 
+                style="width:35%;margin:auto;">Go!</button>
+    </form>
+
+    {% if results %}
+        <ul>
+        {% for res in results %}
+            <li>{{ res }}</li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+</body>
