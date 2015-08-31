@@ -8,7 +8,7 @@ app = Flask(__name__)
 
 @app.route('/', methods=["GET", "POST"])
 def root():
-    maxn = 10
+    maxn = 5
     all_parsers = dict([ (p[0].replace("Parser", ''), p[1]) for p in k2m.getAllParserClass() ])
     all_parsers.pop("any", None)
     all_parser_names = all_parsers.keys()
@@ -21,8 +21,8 @@ def root():
         selected_parser = [ k for k, v in check_src.items() if v == True][0]
         parser = all_parsers[selected_parser](search_word)
         tlist = parser.getTorrentInfo()[:maxn]
-        titles = ["No matching result."] if not len(tlist) else [ t[0].decode("utf-8") for t in tlist ]
-        return render_template("index.html", all_parsers=all_parser_names, results=titles)
+        # tlist = ["No matching result."] if not len(tlist) else tlist
+        return render_template("index.html", all_parsers=all_parser_names, results=tlist, parser=parser)
     else:
         return render_template("index.html", all_parsers=all_parser_names)
 
