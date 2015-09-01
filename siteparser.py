@@ -102,7 +102,7 @@ class _1337xParser(anyParser):
             return tinfo
 
     def resolveLink(self, link):
-        soup = BeautifulSoup(urllib2.urlopen(link))
+        soup = BeautifulSoup(urllib2.urlopen(link), "lxml")
         magnet = soup.find('a', {"class": "magnet"}).get("href")
         return magnet
 
