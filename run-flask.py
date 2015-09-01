@@ -20,10 +20,11 @@ def root():
         check_src = dict([ (p, parser_used in p) for p in all_parsers.keys() ])
         selected_parser = [ k for k, v in check_src.items() if v == True][0]
         parser = all_parsers[selected_parser](search_word)
-        tlist = parser.getTorrentInfo()[:maxn]
+        tlist = parser.getTorrentInfo()
         if isinstance(tlist, Exception):
             return render_template("index.html", all_parsers=all_parser_names, http_error=str(tlist))
         else:
+            tlist = tlist[:maxn]
             return render_template("index.html", all_parsers=all_parser_names, results=tlist, parser=parser)
     else:
         return render_template("index.html", all_parsers=all_parser_names)
