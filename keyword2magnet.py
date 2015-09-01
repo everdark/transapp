@@ -61,7 +61,7 @@ def main():
     np = sum(check_src.values())
 
     if np == 0:
-        print("Source type \"%s\"not found. Program aborted." % args.src)
+        print("Source type \"%s\" not found. Program aborted." % args.src)
         return None
     elif np > 1:
         print("Source type ambiguous. Please re-specify in more accuracy.")
