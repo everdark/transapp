@@ -21,8 +21,10 @@ def root():
         selected_parser = [ k for k, v in check_src.items() if v == True][0]
         parser = all_parsers[selected_parser](search_word)
         tlist = parser.getTorrentInfo()[:maxn]
-        # tlist = ["No matching result."] if not len(tlist) else tlist
-        return render_template("index.html", all_parsers=all_parser_names, results=tlist, parser=parser)
+        if isinstance(tlist, Exception):
+            return render_template("index.html", all_parsers=all_parser_names, http_error=str(tlist))
+        else:
+            return render_template("index.html", all_parsers=all_parser_names, results=tlist, parser=parser)
     else:
         return render_template("index.html", all_parsers=all_parser_names)
 

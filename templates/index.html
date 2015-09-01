@@ -40,4 +40,10 @@
         <p style="margin:15px">No matching result.
     </div>
 {% endif %}
+
+{% if http_error %}
+    <div class="center-block">
+        <p style="margin:15px">{{ http_error }}
+    </div>
+{% endif %}
 {% endblock %}
