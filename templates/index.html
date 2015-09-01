@@ -27,12 +27,14 @@
     <form method="post" role="form">
         <div class="form-group">
             <input class="form-control" placeholder="Enter search words here" 
-                   type="text" name="sw" style="width:35%;margin:auto;">
+                   type="text" name="sw" style="width:35%;margin:auto;" value="{{ request.form["sw"] }}">
         </div>
 
         <div class="form-group">
             <select class="form-control" name="parser" style="width:35%;margin:auto;">
-                <option value='' disabled selected>Select a parser</option>
+                <option value='' disabled selected>
+                {% if results %} {{ request.form["parser"] }} {% else %} Select a parser {% endif %}
+                </option>
             {% for pname in all_parsers %}
                 <option> {{ pname }} </option>
             {% endfor %}
