@@ -71,6 +71,9 @@ def main():
     parser = all_parsers[selected_parser](args.keyword)
 
     tlist = parser.getTorrentInfo()
+    if isinstance(tlist, Exception):
+        print("str(tlist)")
+        return None
     if not len(tlist):
         print("No matching result.")
         return None

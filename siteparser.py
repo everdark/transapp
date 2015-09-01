@@ -39,11 +39,15 @@ class nyaaParser(anyParser):
         return tlist
 
     def getTorrentInfo(self):
-        tlist = self.getParsedPage()
-        tinfo = [ (t.find("td", {"class": "tlistname"}).text.encode("utf-8"),
-                   t.find("td", {"class": "tlistdownload"}).find('a').get("href"),
-                   int(t.find("td", {"class": "tlistdn"}).text)) for t in tlist ]
-        return tinfo
+        try:
+            tlist = self.getParsedPage()
+        except urllib2.HTTPError as e:
+            return e
+        else:
+            tinfo = [ (t.find("td", {"class": "tlistname"}).text.encode("utf-8"),
+                       t.find("td", {"class": "tlistdownload"}).find('a').get("href"),
+                       int(t.find("td", {"class": "tlistdn"}).text)) for t in tlist ]
+            return tinfo
 
     def resolveLink(self, link):
         return transapp.extractMagnet(link)
@@ -62,13 +66,17 @@ class dmhyParser(anyParser):
         return tlist, mlist, stat
 
     def getTorrentInfo(self):
-        tlist, mlist, stat = self.getParsedPage()
-        tlist = [ t.findAll('a')[-1] for t in tlist]
-        tinfo = [ (t.text.encode("utf-8").strip(),
-                   m.get("href"),
-                   0 if s.text == '-' else int(s.text)) 
-                   for t, m, s in zip(tlist, mlist, stat) ]
-        return tinfo
+        try:
+            tlist, mlist, stat = self.getParsedPage()
+        except urllib2.HTTPError as e:
+            return e
+        else:
+            tlist = [ t.findAll('a')[-1] for t in tlist]
+            tinfo = [ (t.text.encode("utf-8").strip(),
+                       m.get("href"),
+                       0 if s.text == '-' else int(s.text)) 
+                       for t, m, s in zip(tlist, mlist, stat) ]
+            return tinfo
 
     def resolveLink(self, link):
         return link
@@ -85,21 +93,25 @@ class _1337xParser(anyParser):
         return tlist[1:]
 
     def getTorrentInfo(self):
-        tlist = self.getParsedPage()
-        if not len(tlist):
-            return []
-        else:
-            result_sec = tlist[0]
-            titles_and_links  = [ (res.find("strong").find('a').text,
-                                   urllib.basejoin(self.site, res.find("strong").find('a').get("href")))
-                                 for res in result_sec.findAll("div", {"class": "coll-1"}) ]
-            se = [ int(res.text) 
-                    for res in result_sec.findAll("div", {"class": "coll-2"}) ]
-            le = [ int(res.text) 
-                    for res in result_sec.findAll("div", {"class": "coll-3"}) ]
-            cnt = map(sum, zip(se, le))
-            tinfo = [ (tl[0], tl[1], c) for tl, c in zip(titles_and_links, cnt)]
-            return tinfo
+        try:
+            tlist = self.getParsedPage()
+        except urllib2.HTTPError as e:
+            return e
+        else: 
+            if not len(tlist):
+                return []
+            else:
+                result_sec = tlist[0]
+                titles_and_links  = [ (res.find("strong").find('a').text,
+                                       urllib.basejoin(self.site, res.find("strong").find('a').get("href")))
+                                     for res in result_sec.findAll("div", {"class": "coll-1"}) ]
+                se = [ int(res.text) 
+                        for res in result_sec.findAll("div", {"class": "coll-2"}) ]
+                le = [ int(res.text) 
+                        for res in result_sec.findAll("div", {"class": "coll-3"}) ]
+                cnt = map(sum, zip(se, le))
+                tinfo = [ (tl[0], tl[1], c) for tl, c in zip(titles_and_links, cnt)]
+                return tinfo
 
     def resolveLink(self, link):
         soup = BeautifulSoup(urllib2.urlopen(link), "lxml")
