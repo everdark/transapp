@@ -72,7 +72,7 @@ def main():
 
     tlist = parser.getTorrentInfo()
     if isinstance(tlist, Exception):
-        print("str(tlist)")
+        print(str(tlist))
         return None
     if not len(tlist):
         print("No matching result.")
