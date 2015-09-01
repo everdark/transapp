@@ -103,7 +103,10 @@ class _1337xParser(anyParser):
 
     def resolveLink(self, link):
         soup = BeautifulSoup(urllib2.urlopen(link), "lxml")
-        magnet = soup.find('a', {"class": "magnet"}).get("href")
+        try:
+            magnet = soup.find('a', {"class": "magnet"}).get("href")
+        except AttributeError:
+            magnet = "Link not available."
         return magnet
 
 
