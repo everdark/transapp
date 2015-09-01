@@ -1,50 +1,28 @@
-<!doctype html>
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    
-    <title>CrawlThemAll</title>
-    
-    <link rel="stylesheet" href="{{ url_for("static", filename="style.css") }}">
-    <link rel="stylesheet" href="{{ url_for("static", filename="bootstrap/css/bootstrap.min.css") }}">
-</head>
-
-<body>
-    <script src="{{ url_for("static", filename="jquery-1.11.3.js") }}"></script>
-    <script src="{{ url_for("static", filename="bootstrap/js/bootstrap.min.js") }}"></script>
-    <script type=text/javascript>
-        function copyToClipboard(text) {
-            window.prompt("copy/cut the link to clipboard...", text);
-        }
-    </script>
-
-    <div class="headline">
-        <h1 class="headline-title bg-primary">Hello Crawler!</h1>
-        <small class="bg-info">You crawl, I crawl.</small>
+{% extends "base.html" %}
+{% block form %}
+<form method="post" role="form">
+    <div class="form-group">
+        <input class="form-control" placeholder="Enter search words here" 
+               type="text" name="sw" style="width:35%;margin:auto;" value="{{ request.form["sw"] }}">
     </div>
 
-    <form method="post" role="form">
-        <div class="form-group">
-            <input class="form-control" placeholder="Enter search words here" 
-                   type="text" name="sw" style="width:35%;margin:auto;" value="{{ request.form["sw"] }}">
-        </div>
+    <div class="form-group">
+        <select class="form-control" name="parser" style="width:35%;margin:auto;">
+            <option value='' disabled selected>
+            {% if results %} {{ request.form["parser"] }} {% else %} Select a parser {% endif %}
+            </option>
+        {% for pname in all_parsers %}
+            <option> {{ pname }} </option>
+        {% endfor %}
+        </select>
+    </div>
 
-        <div class="form-group">
-            <select class="form-control" name="parser" style="width:35%;margin:auto;">
-                <option value='' disabled selected>
-                {% if results %} {{ request.form["parser"] }} {% else %} Select a parser {% endif %}
-                </option>
-            {% for pname in all_parsers %}
-                <option> {{ pname }} </option>
-            {% endfor %}
-            </select>
-        </div>
+    <button type="submit" class="btn btn-default btn-block"
+            style="width:35%;margin:auto;">Go!</button>
+</form>
+{% endblock %}
 
-        <button type="submit" class="btn btn-default btn-block"
-                style="width:35%;margin:auto;">Go!</button>
-    </form>
-
+{% block result %}
 {% if results %}
     <div class="center-block">
         <p style="margin:15px">Results:
@@ -62,4 +40,4 @@
         <p style="margin:15px">No matching result.
     </div>
 {% endif %}
-</body>
+{% endblock %}
