@@ -53,7 +53,7 @@ class nyaaParser(anyParser):
         return transapp.extractMagnet(link)
 
 class dmhyParser(anyParser):
-    """"Specific parser for DMHY"""
+    """Specific parser for DMHY"""
 
     site = "https://share.dmhy.org/"
 
