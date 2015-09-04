@@ -28,7 +28,7 @@ def shutdownTransmission():
     """
     Shutdown transmission daemon if all current torrents are finished downloading.
     """
-    down = subprocess.call(["transmission-remote", "-l"])
+    down = subprocess.call(["service", "transmission-daemon", "status"])
     if not down:
         cur_torrents = subprocess.check_output(["transmission-remote", "-l"])
         cur_torrents = [ t for t in cur_torrents.split('\n') if '%' in t ]
