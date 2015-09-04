@@ -3,13 +3,14 @@
 
 import argparse
 import inspect
+import re
 import textwrap
 
 import siteparser
 
 def getAllParserClass():
     all_parsers = [ c for c in inspect.getmembers(siteparser, inspect.isclass) 
-                    if c[1].__module__ == "siteparser" ]
+                    if re.match("^.*Parser$", c[0]) and c[1].__module__ == "siteparser" ]
     return all_parsers
 
 def getCommandLineParser():
