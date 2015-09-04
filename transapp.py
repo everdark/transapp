@@ -1,12 +1,11 @@
 
 # define helper functions for transapp
 
-import subprocess
-import bencode
-import hashlib
-import base64
-import urllib
-import urllib2
+import os, subprocess
+import datetime, time
+import sqlite3
+import bencode, hashlib, base64
+import urllib, urllib2
 
 def extractMagnet(fname, isLink=True):
     """
@@ -38,5 +37,40 @@ def shutdownTransmission():
             subprocess.call(['service', 'transmission-daemon', 'stop'])
     else:
         pass
+
+def initDBifNotExist(dbname=None):
+    """
+    Create watchlist database if not already existant.
+    """
+    if dbname is None:
+        dbname = "watchlist.db"
+    ts = int(time.time())
+    dt = datetime.datetime.fromtimestamp(ts).strftime("%Y-%m-%d")
+    if not os.path.isfile(dbname):
+        print "%s not found. Initiate one." % dbname
+        conn = sqlite3.connect(dbname)
+        conn.execute("""
+                    create table watchlist(
+                    keyword TEXT,
+                    parser TEXT,
+                    ts INTEGER,
+                    d TEXT,
+                    magnet TEXT,
+                    submitted BOOLEAN)
+                    """)
+        conn.execute("""insert into watchlist values("test", "nyaa", %s, "%s", '', 0)""" % (ts, dt))
+        conn.commit()
+        conn.close()
+    else:
+        print "%s found." % dbname
+        pass
+
+def autoSelectMagnet(tlist):
+    if len(tlist):
+        counts = [ t.cnt for t in tlist ]
+        target = tlist[counts.index(max(counts))]
+        return target.fname, target.magnet
+    else:
+        return None
 
 
