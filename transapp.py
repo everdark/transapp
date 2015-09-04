@@ -56,7 +56,7 @@ def initDBifNotExist(dbname=None):
                     ts INTEGER,
                     d TEXT,
                     magnet TEXT,
-                    submitted BOOLEAN)
+                    submitted BOOLEAN default 0)
                     """)
         conn.execute("""insert into watchlist values("test", "nyaa", %s, "%s", '', 0)""" % (ts, dt))
         conn.commit()
