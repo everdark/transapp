@@ -6,7 +6,7 @@ This is a small script tool that conveniently converts a "bango" into one availa
 
 [![asciicast](https://asciinema.org/a/7gkwp3doab8eh4kxhh59ms2r7.png)](https://asciinema.org/a/7gkwp3doab8eh4kxhh59ms2r7)
 
-### Use format for config.ini:
+### Use format for `config.ini`:
 ```
 [dropbox]
 access_token = your_dropbox_app_token
@@ -17,3 +17,19 @@ magnet_file_path = path_for_the_magnet_maintenance_file
 bad_word = cam,ts
 good_word = 1080
 ```
+
+### Watchlist
+A sqlite database `watchlist.db` to record all pending keywords not having any crawled result. `crawl.py` is designed to interact with this database, preferably in a cronjob fasion. The schema of table `watchlist` follows as:
+
+```
+CREATE TABLE watchlist(
+                    keyword TEXT,
+                    parser TEXT,
+                    ts INTEGER,
+                    d TEXT,
+                    magnet TEXT,
+                    submitted BOOLEAN);
+```
+
+### The Flask web protal
+This is experimental. For fun.
