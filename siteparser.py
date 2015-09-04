@@ -15,6 +15,7 @@ The mechanism to resolve the final magnet link is class-dependent.
 import urllib
 import urllib2
 from bs4 import BeautifulSoup
+import operator
 
 import transapp
 
@@ -44,7 +45,7 @@ class nyaaParser(anyParser):
         except urllib2.HTTPError as e:
             return e
         else:
-            tinfo = [ (t.find("td", {"class": "tlistname"}).text.encode("utf-8"),
+            tinfo = [ parserResult(t.find("td", {"class": "tlistname"}).text.encode("utf-8"),
                        t.find("td", {"class": "tlistdownload"}).find('a').get("href"),
                        int(t.find("td", {"class": "tlistdn"}).text)) for t in tlist ]
             return tinfo
@@ -72,7 +73,7 @@ class dmhyParser(anyParser):
             return e
         else:
             tlist = [ t.findAll('a')[-1] for t in tlist]
-            tinfo = [ (t.text.encode("utf-8").strip(),
+            tinfo = [ parserResult(t.text.encode("utf-8").strip(),
                        m.get("href"),
                        0 if s.text == '-' else int(s.text)) 
                        for t, m, s in zip(tlist, mlist, stat) ]
@@ -110,7 +111,7 @@ class _1337xParser(anyParser):
                 le = [ int(res.text) 
                         for res in result_sec.findAll("div", {"class": "coll-3"}) ]
                 cnt = map(sum, zip(se, le))
-                tinfo = [ (tl[0], tl[1], c) for tl, c in zip(titles_and_links, cnt)]
+                tinfo = [ parserResult(tl[0], tl[1], c) for tl, c in zip(titles_and_links, cnt)]
                 return tinfo
 
     def resolveLink(self, link):
@@ -121,6 +122,12 @@ class _1337xParser(anyParser):
             magnet = "Link not available."
         return magnet
 
+class parserResult(tuple):
+    def __new__(self, fname, magnet, cnt):
+        return tuple.__new__(parserResult, (fname, magnet, cnt))
 
+    fname = property(operator.itemgetter(0))
+    magnet = property(operator.itemgetter(1))
+    cnt = property(operator.itemgetter(2))
 
 
