@@ -53,12 +53,11 @@ def initDBifNotExist(dbname=None):
                     create table watchlist(
                     keyword TEXT,
                     parser TEXT,
-                    ts INTEGER,
-                    d TEXT,
+                    ts timestamp default current_timestamp,
                     magnet TEXT,
                     submitted BOOLEAN default 0)
                     """)
-        conn.execute("""insert into watchlist values("test", "nyaa", %s, "%s", '', 0)""" % (ts, dt))
+        conn.execute("""insert into watchlist(keyword, parser) values("test", "nyaa")""")
         conn.commit()
         conn.close()
     else:
