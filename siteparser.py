@@ -91,7 +91,7 @@ class _1337xParser(anyParser):
         query_link = "%ssearch/%s/1/" % (self.site, urllib.quote(self.searchw))
         soup = BeautifulSoup(urllib2.urlopen(query_link), "lxml")
         tlist = soup.findAll("div", {"class": "tab-detail"})
-        return tlist[1:]
+        return tlist
 
     def getTorrentInfo(self):
         try:
